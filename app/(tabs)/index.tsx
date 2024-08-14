@@ -1,9 +1,13 @@
-import { StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function HomeScreen() {
+  const [inputdata, setInputdata] = useState("");
   return (
-    <View style={styles.container}>
-      <Text style={styles.textcolor}>Hello World</Text>
+    <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: "powderblue" }} />
+      <View style={{ flex: 2, backgroundColor: "skyblue" }} />
+      <View style={{ flex: 3, backgroundColor: "steelblue" }} />
     </View>
   );
 }
@@ -30,5 +34,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     textAlign: "center",
     fontSize: 50,
+  },
+  input: {
+    borderWidth: 2,
+    borderColor: "#ffffff",
+    padding: 2,
+    height: 30,
+    color: "#ffffff",
   },
 });

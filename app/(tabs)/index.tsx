@@ -1,3 +1,4 @@
+import { Navigator } from "expo-router";
 import { useState } from "react";
 import {
   Button,
@@ -8,6 +9,7 @@ import {
   TouchableHighlight,
   View,
 } from "react-native";
+import * as Location from "expo-location";
 
 export default function HomeScreen() {
   const [inputdata, setInputdata] = useState("");
@@ -15,7 +17,15 @@ export default function HomeScreen() {
     <View style={{ flex: 1 }}>
       <View style={styles.container}>
         <Pressable>
-          <Text onPress={(event) => console.log("Test")} style={styles.button}>
+          <Text
+            onPress={async (event) => {
+              let { status } =
+                await Location.requestForegroundPermissionsAsync();
+              let location = await Location.getCurrentPositionAsync({});
+              console.log(location, "location");
+            }}
+            style={styles.button}
+          >
             Locate
           </Text>
         </Pressable>

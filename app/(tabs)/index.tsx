@@ -12,23 +12,77 @@ import {
 import * as Location from "expo-location";
 
 export default function HomeScreen() {
-  const [inputdata, setInputdata] = useState("");
+  const [started, setStarted] = useState(false);
+  const [locations, setLocations] = useState([{}]);
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.container}>
-        <Pressable>
-          <Text
-            onPress={async (event) => {
-              let { status } =
-                await Location.requestForegroundPermissionsAsync();
-              let location = await Location.getCurrentPositionAsync({});
-              console.log(location, "location");
+        {started ? (
+          <Pressable style={styles.sessions}>
+            <Text
+              onPress={async () => {
+                console.log("Added Location");
+                let location = await Location.getCurrentPositionAsync({});
+                const longitude = location.coords.longitude;
+                const latitude = location.coords.latitude;
+                setLocations((prev) => [
+                  ...prev,
+                  { lat: latitude, lan: longitude },
+                ]);
+              }}
+              style={styles.button}
+            >
+              Locate Me
+            </Text>
+            <Text
+              onPress={async () => {
+                console.log("Session ended");
+                let location = await Location.getCurrentPositionAsync({});
+                const longitude = location.coords.longitude;
+                const latitude = location.coords.latitude;
+                setStarted(false);
+                setLocations([]);
+              }}
+              style={styles.button}
+            >
+              End Session
+            </Text>
+          </Pressable>
+        ) : (
+          <Pressable>
+            <Text
+              onPress={async () => {
+                let { status } =
+                  await Location.requestForegroundPermissionsAsync();
+                let location = await Location.getCurrentPositionAsync({});
+                console.log("session Started");
+                const longitude = location.coords.longitude;
+                const latitude = location.coords.latitude;
+                setLocations((prev) => [{ lat: latitude, lan: longitude }]);
+                setStarted(true);
+              }}
+              style={styles.button}
+            >
+              Start Session
+            </Text>
+          </Pressable>
+        )}
+        {locations.length !== 0 && (
+          <View
+            style={{
+              paddingTop: 50,
+              flex: 1,
+              flexDirection: "column",
+              gap: 20,
             }}
-            style={styles.button}
           >
-            Locate
-          </Text>
-        </Pressable>
+            {locations.map((solo_data, index: number) => (
+              <Text style={{ color: "#ffffff" }}>
+                Latitude - {solo_data.lat} Longitude - {solo_data.lan}
+              </Text>
+            ))}
+          </View>
+        )}
       </View>
     </View>
   );
@@ -61,7 +115,9 @@ const styles = StyleSheet.create({
     height: 30,
     color: "#ffffff",
   },
-  text: {
-    color: "#ffffff",
+  sessions: {
+    flexDirection: "row",
+    padding: 10,
+    gap: 20,
   },
 });

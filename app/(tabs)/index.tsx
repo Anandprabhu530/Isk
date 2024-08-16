@@ -87,6 +87,9 @@ export default function HomeScreen() {
     </View>
   );
 }
+// const tests = 12742 * 1/(Math.asin(Math.sqrt(Math.pow(Math.sin((lan2-lan1)/2),2)) + Math.cos(lan1)*Math.cos(lan2)*Math.pow(Math.sin(lat2-lat1),2)))
+// const test = 12742 × sin⁻¹(√[sin²((θ₂ - θ₁) /2) + cosθ₁ × cosθ₂ × sin²((φ₂ - φ₁)/2)])
+//acos(sin(lat1)*sin(lat2)+cos(lat1)*cos(lat2)*cos(lon2-lon1))*6371 (6371 is Earth radius in km.)
 
 const styles = StyleSheet.create({
   container: {

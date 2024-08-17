@@ -1,19 +1,28 @@
 import { Navigator } from "expo-router";
-import { useState } from "react";
-import {
-  Button,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableHighlight,
-  View,
-} from "react-native";
+import { useEffect, useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import * as Location from "expo-location";
 
 export default function HomeScreen() {
   const [started, setStarted] = useState(false);
   const [locations, setLocations] = useState([{}]);
+  const [distance, setDistance] = useState<number>();
+  useEffect(() => {
+    if (locations.length >= 2) {
+      let km = 0;
+      for (let i = 1; i < locations.length; i++) {
+        km +=
+          Math.acos(
+            Math.sin(locations[i - 1].lat) * Math.sin(locations[i].lat) +
+              Math.cos(locations[i - 1].lat) *
+                Math.cos(locations[i].lat) *
+                Math.cos(locations[i].lan - locations[u - 1].lan)
+          ) * 6371;
+      }
+      setDistance(km);
+    }
+  }, [locations]);
+
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -89,7 +98,6 @@ export default function HomeScreen() {
 }
 // const tests = 12742 * 1/(Math.asin(Math.sqrt(Math.pow(Math.sin((lan2-lan1)/2),2)) + Math.cos(lan1)*Math.cos(lan2)*Math.pow(Math.sin(lat2-lat1),2)))
 // const test = 12742 × sin⁻¹(√[sin²((θ₂ - θ₁) /2) + cosθ₁ × cosθ₂ × sin²((φ₂ - φ₁)/2)])
-//acos(sin(lat1)*sin(lat2)+cos(lat1)*cos(lat2)*cos(lon2-lon1))*6371 (6371 is Earth radius in km.)
 
 const styles = StyleSheet.create({
   container: {

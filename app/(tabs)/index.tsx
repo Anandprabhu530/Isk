@@ -5,12 +5,9 @@ import * as Location from "expo-location";
 
 export default function HomeScreen() {
   const [started, setStarted] = useState(false);
-  const [locations, setLocations] = useState([
-    { lat: 0.18448704232371044, lan: 1.3480867536214232 },
-    { lat: 0.1842454206873936, lan: 1.3479561261988868 },
-    { lat: 0.18386362991351987, lan: 1.3478056613640725 },
-  ]);
+  const [locations, setLocations] = useState([{}]);
   const [distance, setDistance] = useState<number>();
+  const [time, setTime] = useState<string[]>([]);
 
   useEffect(() => {
     if (locations.length >= 2) {
@@ -28,7 +25,6 @@ export default function HomeScreen() {
         km += 6371 * c;
       }
       setDistance(km);
-      console.log(km);
     }
   }, [locations]);
 
@@ -43,6 +39,10 @@ export default function HomeScreen() {
                 let location = await Location.getCurrentPositionAsync({});
                 const longitude = location.coords.longitude;
                 const latitude = location.coords.latitude;
+                console.log(location);
+                var unixTimestamp = location.timestamp;
+                var date = new Date(unixTimestamp).toLocaleTimeString();
+                console.log(date);
                 setLocations((prev) => [
                   ...prev,
                   {
@@ -50,6 +50,7 @@ export default function HomeScreen() {
                     lan: (longitude * 3.14) / 180,
                   },
                 ]);
+                setTime((prev) => [...prev, date]);
               }}
               style={styles.button}
             >
@@ -61,8 +62,18 @@ export default function HomeScreen() {
                 let location = await Location.getCurrentPositionAsync({});
                 const longitude = location.coords.longitude;
                 const latitude = location.coords.latitude;
-                setStarted(false);
-                setLocations([]);
+                console.log(location);
+                var unixTimestamp = location.timestamp;
+                var date = new Date(unixTimestamp).toLocaleTimeString();
+                console.log(date);
+                setLocations((prev) => [
+                  ...prev,
+                  {
+                    lat: (latitude * 3.14) / 180,
+                    lan: (longitude * 3.14) / 180,
+                  },
+                ]);
+                setTime((prev) => [...prev, date]);
               }}
               style={styles.button}
             >
@@ -79,12 +90,17 @@ export default function HomeScreen() {
                 console.log("session Started");
                 const longitude = location.coords.longitude;
                 const latitude = location.coords.latitude;
+                console.log(location);
+                var unixTimestamp = location.timestamp;
+                var date = new Date(unixTimestamp).toLocaleTimeString();
+                console.log(date);
                 setLocations((prev) => [
                   {
                     lat: (latitude * 3.14) / 180,
                     lan: (longitude * 3.14) / 180,
                   },
                 ]);
+                setTime([date]);
                 setStarted(true);
               }}
               style={styles.button}
@@ -103,7 +119,7 @@ export default function HomeScreen() {
             }}
           >
             {locations.map((solo_data, index: number) => (
-              <Text style={{ color: "#ffffff" }}>
+              <Text style={{ color: "#ffffff" }} key={index}>
                 Latitude - {solo_data.lat} Longitude - {solo_data.lan}
               </Text>
             ))}
@@ -113,7 +129,10 @@ export default function HomeScreen() {
     </View>
   );
 }
-// const tests = 12742 * 1/(Math.asin(Math.sqrt(Math.pow(Math.sin((lan2-lan1)/2),2)) + Math.cos(lan1)*Math.cos(lan2)*Math.pow(Math.sin(lat2-lat1),2)))
+
+//can use this formula also
+/* const tests = 12742 * 1/(Math.asin(Math.sqrt(Math.pow(Math.sin((lan2-lan1)/2),2))
+   + Math.cos(lan1) * Math.cos(lan2) * Math.pow(Math.sin(lat2 - lat1), 2)))*/
 // const test = 12742 × sin⁻¹(√[sin²((θ₂ - θ₁) /2) + cosθ₁ × cosθ₂ × sin²((φ₂ - φ₁)/2)])
 
 const styles = StyleSheet.create({
@@ -125,7 +144,7 @@ const styles = StyleSheet.create({
     borderWidth: 5,
     borderColor: "thistle",
     borderRadius: 0,
-    paddingTop: 50,
+    paddingTop: 100,
   },
   button: {
     paddingHorizontal: 20,

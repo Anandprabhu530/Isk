@@ -5,21 +5,30 @@ import * as Location from "expo-location";
 
 export default function HomeScreen() {
   const [started, setStarted] = useState(false);
-  const [locations, setLocations] = useState([{}]);
+  const [locations, setLocations] = useState([
+    { lat: 0.18448704232371044, lan: 1.3480867536214232 },
+    { lat: 0.1842454206873936, lan: 1.3479561261988868 },
+    { lat: 0.18386362991351987, lan: 1.3478056613640725 },
+  ]);
   const [distance, setDistance] = useState<number>();
+
   useEffect(() => {
     if (locations.length >= 2) {
       let km = 0;
       for (let i = 1; i < locations.length; i++) {
-        km +=
-          Math.acos(
-            Math.sin(locations[i - 1].lat) * Math.sin(locations[i].lat) +
-              Math.cos(locations[i - 1].lat) *
-                Math.cos(locations[i].lat) *
-                Math.cos(locations[i].lan - locations[u - 1].lan)
-          ) * 6371;
+        const dLat = locations[i].lat - locations[i - 1].lat;
+        const dLon = locations[i].lat - locations[i - 1].lat;
+        const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(locations[i - 1].lat) *
+            Math.cos(locations[i].lat) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        km += 6371 * c;
       }
       setDistance(km);
+      console.log(km);
     }
   }, [locations]);
 
@@ -36,7 +45,10 @@ export default function HomeScreen() {
                 const latitude = location.coords.latitude;
                 setLocations((prev) => [
                   ...prev,
-                  { lat: latitude, lan: longitude },
+                  {
+                    lat: (latitude * 3.14) / 180,
+                    lan: (longitude * 3.14) / 180,
+                  },
                 ]);
               }}
               style={styles.button}
@@ -67,7 +79,12 @@ export default function HomeScreen() {
                 console.log("session Started");
                 const longitude = location.coords.longitude;
                 const latitude = location.coords.latitude;
-                setLocations((prev) => [{ lat: latitude, lan: longitude }]);
+                setLocations((prev) => [
+                  {
+                    lat: (latitude * 3.14) / 180,
+                    lan: (longitude * 3.14) / 180,
+                  },
+                ]);
                 setStarted(true);
               }}
               style={styles.button}

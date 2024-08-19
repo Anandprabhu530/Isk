@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Text, View, StyleSheet, Pressable } from "react-native";
 import * as SecureStore from "expo-secure-store";
 
@@ -9,7 +9,16 @@ const History = () => {
     <View style={styles.Container}>
       <Text style={styles.History}>History</Text>
       {Historydata && (
-        <Text style={{ color: "#ffffff" }}>{Historydata[0].date}</Text>
+        <View style={styles.outerCard}>
+          {Historydata.map((single_history: any, index: number) => (
+            <View style={styles.innerCard} key={index}>
+              <Text style={{ color: "#ffffff" }}>{single_history.date}</Text>
+              <Text style={{ color: "#ffffff", fontSize: 20 }}>
+                {single_history.km.toFixed(3)} Km
+              </Text>
+            </View>
+          ))}
+        </View>
       )}
       <Pressable>
         <Text
@@ -56,6 +65,22 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 12,
     borderColor: "#ffffff",
+  },
+  innerCard: {
+    color: "#ffffff",
+    borderWidth: 2,
+    borderColor: "#ffffff",
+    padding: 10,
+    margin: 10,
+    borderRadius: 10,
+    justifyContent: "space-between",
+    flexDirection: "row",
+  },
+  outerCard: {
+    color: "#ffffff",
+    borderColor: "#ffffff",
+    borderWidth: 2,
+    width: "100%",
   },
 });
 

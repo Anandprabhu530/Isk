@@ -41,7 +41,9 @@ export default function HomeScreen() {
                 const longitude = location.coords.longitude;
                 const latitude = location.coords.latitude;
                 var unixTimestamp = location.timestamp;
-                var date = new Date(unixTimestamp).toLocaleTimeString();
+                var date = new Date(unixTimestamp).toDateString();
+                const timelist = date.split(" ");
+                const time = timelist[1] + " " + timelist[2];
                 console.log(date);
                 setLocations((prev) => [
                   ...prev,
@@ -63,27 +65,31 @@ export default function HomeScreen() {
                 const longitude = location.coords.longitude;
                 const latitude = location.coords.latitude;
                 var unixTimestamp = location.timestamp;
-                var date = new Date(unixTimestamp).toLocaleTimeString();
+                var date = new Date(unixTimestamp).toDateString();
+                const timelist = date.split(" ");
+                const datetostore = timelist[1] + " " + timelist[2];
                 console.log(date);
-                setLocations([]);
-                setStarted(false);
+                setLocations((prev) => [
+                  ...prev,
+                  {
+                    lat: (latitude * 3.14) / 180,
+                    lan: (longitude * 3.14) / 180,
+                  },
+                ]);
                 setTime((prev) => [...prev, date]);
                 const his = await SecureStore.getItemAsync("History").then(
                   (res) => JSON.parse(res)
                 );
-                console.log(his);
                 const arr = [
                   ...his,
-                  { date: date, km: distance, time: "testtime" },
+                  { date: datetostore, km: distance, Starttime: time[0] },
                 ];
                 const res = await SecureStore.setItemAsync(
                   "History",
                   JSON.stringify(arr)
                 );
-
-                if (res) {
-                  console.log(res, "from index");
-                }
+                setStarted(false);
+                setLocations([]);
               }}
               style={styles.button}
             >
@@ -101,7 +107,9 @@ export default function HomeScreen() {
                 const longitude = location.coords.longitude;
                 const latitude = location.coords.latitude;
                 var unixTimestamp = location.timestamp;
-                var date = new Date(unixTimestamp).toLocaleTimeString();
+                var date = new Date(unixTimestamp).toDateString();
+                const timelist = date.split(" ");
+                const time = timelist[1] + " " + timelist[2];
                 console.log(date);
                 setLocations((prev) => [
                   {

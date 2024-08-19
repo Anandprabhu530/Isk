@@ -2,6 +2,7 @@ import { Navigator } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import * as Location from "expo-location";
+import * as SecureStore from "expo-secure-store";
 
 export default function HomeScreen() {
   const [started, setStarted] = useState(false);
@@ -39,7 +40,6 @@ export default function HomeScreen() {
                 let location = await Location.getCurrentPositionAsync({});
                 const longitude = location.coords.longitude;
                 const latitude = location.coords.latitude;
-                console.log(location);
                 var unixTimestamp = location.timestamp;
                 var date = new Date(unixTimestamp).toLocaleTimeString();
                 console.log(date);
@@ -62,18 +62,28 @@ export default function HomeScreen() {
                 let location = await Location.getCurrentPositionAsync({});
                 const longitude = location.coords.longitude;
                 const latitude = location.coords.latitude;
-                console.log(location);
                 var unixTimestamp = location.timestamp;
                 var date = new Date(unixTimestamp).toLocaleTimeString();
                 console.log(date);
-                setLocations((prev) => [
-                  ...prev,
-                  {
-                    lat: (latitude * 3.14) / 180,
-                    lan: (longitude * 3.14) / 180,
-                  },
-                ]);
+                setLocations([]);
+                setStarted(false);
                 setTime((prev) => [...prev, date]);
+                const his = await SecureStore.getItemAsync("History").then(
+                  (res) => JSON.parse(res)
+                );
+                console.log(his);
+                const arr = [
+                  ...his,
+                  { date: date, km: distance, time: "testtime" },
+                ];
+                const res = await SecureStore.setItemAsync(
+                  "History",
+                  JSON.stringify(arr)
+                );
+
+                if (res) {
+                  console.log(res, "from index");
+                }
               }}
               style={styles.button}
             >
@@ -90,7 +100,6 @@ export default function HomeScreen() {
                 console.log("session Started");
                 const longitude = location.coords.longitude;
                 const latitude = location.coords.latitude;
-                console.log(location);
                 var unixTimestamp = location.timestamp;
                 var date = new Date(unixTimestamp).toLocaleTimeString();
                 console.log(date);

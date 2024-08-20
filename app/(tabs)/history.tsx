@@ -13,7 +13,9 @@ const History = () => {
           {Historydata.map((single_history: any, index: number) => (
             <View style={styles.innerCard} key={index}>
               <Text style={{ color: "#ffffff" }}>{single_history.date}</Text>
-              <Text style={{ color: "#ffffff", fontSize: 20 }}>Km</Text>
+              <Text style={{ color: "#ffffff", fontSize: 20 }}>
+                {single_history.travel_distance}Km
+              </Text>
             </View>
           ))}
         </View>

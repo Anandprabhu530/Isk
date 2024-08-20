@@ -13,14 +13,12 @@ const History = () => {
           {Historydata.map((single_history: any, index: number) => (
             <View style={styles.innerCard} key={index}>
               <Text style={{ color: "#ffffff" }}>{single_history.date}</Text>
-              <Text style={{ color: "#ffffff", fontSize: 20 }}>
-                {single_history.km.toFixed(3)} Km
-              </Text>
+              <Text style={{ color: "#ffffff", fontSize: 20 }}>Km</Text>
             </View>
           ))}
         </View>
       )}
-      <Pressable>
+      <Pressable style={{ flexDirection: "row", gap: 50, marginTop: 40 }}>
         <Text
           style={styles.button}
           onPress={async () => {
@@ -36,6 +34,15 @@ const History = () => {
           }}
         >
           Load Data
+        </Text>
+        <Text
+          style={styles.button}
+          onPress={async () => {
+            let res = await SecureStore.deleteItemAsync("History");
+            setHistoryData([]);
+          }}
+        >
+          Delete Data
         </Text>
       </Pressable>
     </View>

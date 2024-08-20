@@ -1,4 +1,3 @@
-import { Navigator } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import * as Location from "expo-location";
@@ -6,9 +5,11 @@ import * as SecureStore from "expo-secure-store";
 
 export default function HomeScreen() {
   const [started, setStarted] = useState(false);
-  const [locations, setLocations] = useState([{}]);
+  const [locations, setLocations] = useState<
+    { lat: number; lan: number }[] | any
+  >([{}]);
   const [distance, setDistance] = useState<number>();
-  const [time, setTime] = useState<string[]>([]);
+  const [startTime, setStartTime] = useState<any>();
 
   useEffect(() => {
     if (locations.length >= 2) {
@@ -29,6 +30,20 @@ export default function HomeScreen() {
     }
   }, [locations]);
 
+  const location_finder = async () => {
+    let location = await Location.getCurrentPositionAsync({});
+    const longitude = location.coords.longitude;
+    const latitude = location.coords.latitude;
+    setLocations((prev: any) => [
+      ...prev,
+      {
+        lat: (latitude * 3.14) / 180,
+        lan: (longitude * 3.14) / 180,
+      },
+    ]);
+    return location;
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -36,23 +51,7 @@ export default function HomeScreen() {
           <Pressable style={styles.sessions}>
             <Text
               onPress={async () => {
-                console.log("Added Location");
-                let location = await Location.getCurrentPositionAsync({});
-                const longitude = location.coords.longitude;
-                const latitude = location.coords.latitude;
-                var unixTimestamp = location.timestamp;
-                var date = new Date(unixTimestamp).toDateString();
-                const timelist = date.split(" ");
-                const time = timelist[1] + " " + timelist[2];
-                console.log(date);
-                setLocations((prev) => [
-                  ...prev,
-                  {
-                    lat: (latitude * 3.14) / 180,
-                    lan: (longitude * 3.14) / 180,
-                  },
-                ]);
-                setTime((prev) => [...prev, date]);
+                await location_finder();
               }}
               style={styles.button}
             >
@@ -60,34 +59,43 @@ export default function HomeScreen() {
             </Text>
             <Text
               onPress={async () => {
-                console.log("Session ended");
-                let location = await Location.getCurrentPositionAsync({});
-                const longitude = location.coords.longitude;
-                const latitude = location.coords.latitude;
-                var unixTimestamp = location.timestamp;
-                var date = new Date(unixTimestamp).toDateString();
-                const timelist = date.split(" ");
-                const datetostore = timelist[1] + " " + timelist[2];
-                console.log(date);
-                setLocations((prev) => [
-                  ...prev,
+                const location = await location_finder();
+                var Unix_to_String = new Date(
+                  location.timestamp
+                ).toDateString();
+
+                //Split to get date
+                const unix_toString_List = Unix_to_String.split(" ");
+
+                //get the date
+                const date = `${unix_toString_List[1]} ${unix_toString_List[2]}`;
+
+                //time taken from the epoch start time and end time
+                const time_taken = Math.abs(location.timestamp - startTime);
+
+                //check for already present history
+                const isHistory_available = await SecureStore.getItemAsync(
+                  "History"
+                ).then((res) => JSON.parse(res));
+
+                //create to store history
+                let arr = [
                   {
-                    lat: (latitude * 3.14) / 180,
-                    lan: (longitude * 3.14) / 180,
+                    date: date,
+                    travel_distance: distance,
+                    time_taken: time_taken,
                   },
-                ]);
-                setTime((prev) => [...prev, date]);
-                const his = await SecureStore.getItemAsync("History").then(
-                  (res) => JSON.parse(res)
-                );
-                const arr = [
-                  ...his,
-                  { date: datetostore, km: distance, Starttime: time[0] },
                 ];
+
+                //if history available append old data and new data
+                if (isHistory_available) {
+                  arr = [...arr, ...isHistory_available];
+                }
                 const res = await SecureStore.setItemAsync(
                   "History",
                   JSON.stringify(arr)
                 );
+
                 setStarted(false);
                 setLocations([]);
               }}
@@ -100,24 +108,16 @@ export default function HomeScreen() {
           <Pressable>
             <Text
               onPress={async () => {
+                //get permission for location -- need to implement error state
                 let { status } =
                   await Location.requestForegroundPermissionsAsync();
-                let location = await Location.getCurrentPositionAsync({});
-                console.log("session Started");
-                const longitude = location.coords.longitude;
-                const latitude = location.coords.latitude;
-                var unixTimestamp = location.timestamp;
-                var date = new Date(unixTimestamp).toDateString();
-                const timelist = date.split(" ");
-                const time = timelist[1] + " " + timelist[2];
-                console.log(date);
-                setLocations((prev) => [
-                  {
-                    lat: (latitude * 3.14) / 180,
-                    lan: (longitude * 3.14) / 180,
-                  },
-                ]);
-                setTime([date]);
+
+                const location = await location_finder();
+
+                //set start time in unix epoch
+                setStartTime(location.timestamp);
+
+                //set state to show end session button
                 setStarted(true);
               }}
               style={styles.button}
@@ -135,7 +135,7 @@ export default function HomeScreen() {
               gap: 20,
             }}
           >
-            {locations.map((solo_data, index: number) => (
+            {locations.map((solo_data: any, index: number) => (
               <Text style={{ color: "#ffffff" }} key={index}>
                 Latitude - {solo_data.lat} Longitude - {solo_data.lan}
               </Text>

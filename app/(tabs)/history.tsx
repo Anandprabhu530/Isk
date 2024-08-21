@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Text, View, StyleSheet, Pressable } from "react-native";
+import { Text, View, StyleSheet, Pressable, ScrollView } from "react-native";
 import * as SecureStore from "expo-secure-store";
 
 const History = () => {
   const [Historydata, setHistoryData] = useState<any>();
 
   return (
-    <View style={styles.Container}>
+    <ScrollView style={styles.Container}>
       <Text style={styles.History}>History</Text>
       {Historydata && (
         <View style={styles.outerCard}>
@@ -20,7 +20,14 @@ const History = () => {
           ))}
         </View>
       )}
-      <Pressable style={{ flexDirection: "row", gap: 50, marginTop: 40 }}>
+      <Pressable
+        style={{
+          flexDirection: "row",
+          gap: 50,
+          marginTop: 40,
+          justifyContent: "center",
+        }}
+      >
         <Text
           style={styles.button}
           onPress={async () => {
@@ -47,7 +54,7 @@ const History = () => {
           Delete Data
         </Text>
       </Pressable>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -65,7 +72,6 @@ const styles = StyleSheet.create({
     marginTop: 40,
     borderWidth: 3,
     borderColor: "#ffffff",
-    alignItems: "center",
   },
   button: {
     paddingHorizontal: 20,

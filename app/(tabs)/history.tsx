@@ -8,18 +8,6 @@ const History = () => {
   return (
     <ScrollView style={styles.Container}>
       <Text style={styles.History}>History</Text>
-      {Historydata && (
-        <View style={styles.outerCard}>
-          {Historydata.map((single_history: any, index: number) => (
-            <View style={styles.innerCard} key={index}>
-              <Text style={{ color: "#ffffff" }}>{single_history.date}</Text>
-              <Text style={{ color: "#ffffff", fontSize: 20 }}>
-                {single_history.travel_distance}Km
-              </Text>
-            </View>
-          ))}
-        </View>
-      )}
       <Pressable
         style={{
           flexDirection: "row",
@@ -42,7 +30,7 @@ const History = () => {
             }
           }}
         >
-          Load Data
+          Load History
         </Text>
         <Text
           style={styles.button}
@@ -51,9 +39,40 @@ const History = () => {
             setHistoryData([]);
           }}
         >
-          Delete Data
+          Delete History
         </Text>
       </Pressable>
+      {Historydata && (
+        <View style={styles.outerCard}>
+          {Historydata.map((single_history: any, index: number) => (
+            <View style={styles.innerCard} key={index}>
+              <View style={{ flexDirection: "row" }}>
+                <Text
+                  style={{
+                    color: "#ffffff",
+                    fontSize: 20,
+                    paddingHorizontal: 10,
+                  }}
+                >
+                  {single_history.travel_distance}
+                  <Text style={{ fontSize: 10, paddingLeft: 2 }}> Km</Text>
+                </Text>
+                <Text
+                  style={{
+                    color: "#ffffff",
+                    fontSize: 20,
+                    paddingLeft: 30,
+                  }}
+                >
+                  {Math.floor(single_history.time_taken / (1000 * 60))}
+                  <Text style={{ fontSize: 10, color: "#ffffff" }}> mins</Text>
+                </Text>
+              </View>
+              <Text style={{ color: "#ffffff" }}>{single_history.date}</Text>
+            </View>
+          ))}
+        </View>
+      )}
     </ScrollView>
   );
 };
@@ -93,9 +112,8 @@ const styles = StyleSheet.create({
   },
   outerCard: {
     color: "#ffffff",
-    borderColor: "#ffffff",
-    borderWidth: 2,
     width: "100%",
+    paddingTop: 20,
   },
 });
 

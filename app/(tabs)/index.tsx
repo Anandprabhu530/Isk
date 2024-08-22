@@ -7,11 +7,21 @@ export default function HomeScreen() {
   const [started, setStarted] = useState(false);
   const [locations, setLocations] = useState<any>([]);
   const [startTime, setStartTime] = useState<any>();
+  const [timer, setTimer] = useState<any>();
 
   useEffect(() => {
     if (started) {
       const intervalId = setInterval(() => location_finder(), 250000);
       return () => clearInterval(intervalId);
+    }
+  }, [started]);
+
+  useEffect(() => {
+    if (started) {
+      const timerid = setInterval(() => {
+        setTimer(Date.now() - startTime);
+      }, 10);
+      return () => clearInterval(timerid);
     }
   }, [started]);
 
@@ -35,74 +45,77 @@ export default function HomeScreen() {
       <View style={styles.container}>
         {started ? (
           <Pressable style={styles.sessions}>
-            <Text
-              onPress={async () => {
-                await location_finder();
-              }}
-              style={styles.button}
-            >
-              Locate Me
-            </Text>
-            <Text
-              onPress={async () => {
-                const location = await location_finder();
-                var Unix_to_String = new Date(
-                  location.timestamp
-                ).toDateString();
+            <Pressable>
+              <Text
+                onPress={async () => {
+                  await location_finder();
+                }}
+                style={styles.button}
+              >
+                Locate Me
+              </Text>
+              <Text
+                onPress={async () => {
+                  const location = await location_finder();
+                  var Unix_to_String = new Date(
+                    location.timestamp
+                  ).toDateString();
 
-                //Split to get date
-                const unix_toString_List = Unix_to_String.split(" ");
+                  //Split to get date
+                  const unix_toString_List = Unix_to_String.split(" ");
 
-                //get the date
-                const date = `${unix_toString_List[1]} ${unix_toString_List[2]}`;
+                  //get the date
+                  const date = `${unix_toString_List[1]} ${unix_toString_List[2]}`;
 
-                //time taken from the epoch start time and end time
-                const time_taken = Math.abs(location.timestamp - startTime);
+                  //time taken from the epoch start time and end time
+                  const time_taken = Math.abs(location.timestamp - startTime);
 
-                //check for already present history
-                const isHistory_available = await SecureStore.getItemAsync(
-                  "History"
-                ).then((res) => JSON.parse(res));
+                  //check for already present history
+                  const isHistory_available = await SecureStore.getItemAsync(
+                    "History"
+                  ).then((res) => JSON.parse(res));
 
-                //add distance to the local object
-                let km = 0;
-                for (let i = 1; i < locations.length; i++) {
-                  const dLat = locations[i].lat - locations[i - 1].lat;
-                  const dLon = locations[i].lat - locations[i - 1].lat;
-                  const a =
-                    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                    Math.cos(locations[i - 1].lat) *
-                      Math.cos(locations[i].lat) *
-                      Math.sin(dLon / 2) *
-                      Math.sin(dLon / 2);
-                  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                  km += 6371 * c;
-                }
-                //create to store history
-                let arr = [
-                  {
-                    date: date,
-                    travel_distance: km,
-                    time_taken: time_taken,
-                  },
-                ];
+                  //add distance to the local object
+                  let km = 0;
+                  for (let i = 1; i < locations.length; i++) {
+                    const dLat = locations[i].lat - locations[i - 1].lat;
+                    const dLon = locations[i].lat - locations[i - 1].lat;
+                    const a =
+                      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(locations[i - 1].lat) *
+                        Math.cos(locations[i].lat) *
+                        Math.sin(dLon / 2) *
+                        Math.sin(dLon / 2);
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                    km += 6371 * c;
+                  }
+                  //create to store history
+                  let arr = [
+                    {
+                      date: date,
+                      travel_distance: km,
+                      time_taken: time_taken,
+                    },
+                  ];
 
-                //if history available append old data and new data
-                if (isHistory_available) {
-                  arr = [...arr, ...isHistory_available];
-                }
-                const res = await SecureStore.setItemAsync(
-                  "History",
-                  JSON.stringify(arr)
-                );
+                  //if history available append old data and new data
+                  if (isHistory_available) {
+                    arr = [...arr, ...isHistory_available];
+                  }
+                  const res = await SecureStore.setItemAsync(
+                    "History",
+                    JSON.stringify(arr)
+                  );
 
-                setStarted(false);
-                setLocations([]);
-              }}
-              style={styles.button}
-            >
-              End Session
-            </Text>
+                  setStarted(false);
+                  setLocations([]);
+                }}
+                style={styles.button}
+              >
+                End Session
+              </Text>
+            </Pressable>
+            <Text>{timer}</Text>
           </Pressable>
         ) : (
           <Pressable>

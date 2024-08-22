@@ -20,7 +20,7 @@ export default function HomeScreen() {
     if (started) {
       const timerid = setInterval(() => {
         setTimer(Date.now() - startTime);
-      }, 10);
+      }, 1000);
       return () => clearInterval(timerid);
     }
   }, [started]);
@@ -44,8 +44,8 @@ export default function HomeScreen() {
     <ScrollView style={styles.wholescreen}>
       <View style={styles.container}>
         {started ? (
-          <Pressable style={styles.sessions}>
-            <Pressable>
+          <Pressable style={{ alignItems: "center" }}>
+            <Pressable style={styles.sessions}>
               <Text
                 onPress={async () => {
                   await location_finder();
@@ -115,7 +115,19 @@ export default function HomeScreen() {
                 End Session
               </Text>
             </Pressable>
-            <Text>{timer}</Text>
+            <Text style={styles.timer}>
+              {(timer / (1000 * 60 * 60)) % 60 > 10
+                ? Math.floor((timer / (1000 * 60 * 60)) % 60)
+                : "0" + Math.floor((timer / (1000 * 60 * 60)) % 60)}{" "}
+              :{" "}
+              {(timer / (1000 * 60)) % 60 > 10
+                ? Math.floor((timer / (1000 * 60)) % 60)
+                : "0" + Math.floor((timer / (1000 * 60)) % 60)}{" "}
+              :{" "}
+              {(timer / 1000) % 60 > 10
+                ? Math.floor((timer / 1000) % 60)
+                : "0" + Math.floor((timer / 1000) % 60)}
+            </Text>
           </Pressable>
         ) : (
           <Pressable>
@@ -155,7 +167,8 @@ export default function HomeScreen() {
                 }}
                 key={index}
               >
-                Latitude - {solo_data.lat} Longitude - {solo_data.lan}
+                Latitude - {solo_data.lat.toFixed(3)} {"    "}Longitude -
+                {solo_data.lan.toFixed(3)}
               </Text>
             ))}
           </ScrollView>
@@ -176,6 +189,11 @@ const styles = StyleSheet.create({
     borderWidth: 5,
     borderColor: "#800d16",
     borderRadius: 0,
+  },
+  timer: {
+    marginVertical: 100,
+    fontSize: 40,
+    color: "#ffffff",
   },
   container: {
     flex: 1,

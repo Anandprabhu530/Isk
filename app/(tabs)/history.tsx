@@ -4,6 +4,8 @@ import * as SecureStore from "expo-secure-store";
 
 const History = () => {
   const [Historydata, setHistoryData] = useState<any>();
+  const [totaldistance, setTotaldistance] = useState<any>(null);
+  const [totaltime, setTotaltime] = useState<any>(null);
 
   return (
     <ScrollView style={styles.Container}>
@@ -25,6 +27,14 @@ const History = () => {
             if (res) {
               console.log(res);
               setHistoryData(res);
+              let distance = 0;
+              let time = 0;
+              res.map((solodata) => {
+                distance += solodata.travel_distance;
+                time += solodata.time_taken;
+              });
+              setTotaldistance(distance);
+              setTotaltime(time);
             } else {
               alert("Cannot find history");
             }
@@ -42,6 +52,20 @@ const History = () => {
           Delete History
         </Text>
       </Pressable>
+      <View style={styles.total}>
+        <View style={styles.innertotal}>
+          <Text style={{ color: "#ffffff", fontSize: 30 }}>
+            {totaldistance ? totaldistance.toFixed(2) : 0} km
+          </Text>
+          <Text style={{ color: "#ffffff" }}>Total Distance</Text>
+        </View>
+        <View style={styles.innertotal}>
+          <Text style={{ color: "#ffffff", fontSize: 30 }}>
+            {totaltime ? (totaltime / (1000 * 60 * 60)).toFixed(1) : 0} hr
+          </Text>
+          <Text style={{ color: "#ffffff" }}> Total Time Spent</Text>
+        </View>
+      </View>
       {Historydata && (
         <View style={styles.outerCard}>
           {Historydata.map((single_history: any, index: number) => (
@@ -54,7 +78,7 @@ const History = () => {
                     paddingHorizontal: 10,
                   }}
                 >
-                  {single_history.travel_distance}
+                  {single_history.travel_distance.toFixed(2)}
                   <Text style={{ fontSize: 10, paddingLeft: 2 }}> Km</Text>
                 </Text>
                 <Text
@@ -92,6 +116,15 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: "#ffffff",
   },
+  innertotal: {
+    borderWidth: 2,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    alignItems: "center",
+    gap: 10,
+    borderColor: "#ffffff",
+  },
   button: {
     paddingHorizontal: 20,
     paddingVertical: 10,
@@ -99,6 +132,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 12,
     borderColor: "#ffffff",
+  },
+  total: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginVertical: 10,
   },
   innerCard: {
     color: "#ffffff",

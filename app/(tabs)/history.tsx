@@ -63,7 +63,13 @@ const History = () => {
           <Text style={{ color: "#ffffff", fontSize: 30 }}>
             {totaltime ? (totaltime / (1000 * 60 * 60)).toFixed(1) : 0} hr
           </Text>
-          <Text style={{ color: "#ffffff" }}> Total Time Spent</Text>
+          <Text style={{ color: "#ffffff" }}> Total Duration</Text>
+        </View>
+        <View style={styles.innertotal}>
+          <Text style={{ color: "#ffffff", fontSize: 30 }}>
+            {Historydata.length()}
+          </Text>
+          <Text style={{ color: "#ffffff" }}> Total Sessions</Text>
         </View>
       </View>
       {Historydata && (

@@ -67,7 +67,7 @@ const History = () => {
         </View>
         <View style={styles.innertotal}>
           <Text style={{ color: "#ffffff", fontSize: 30 }}>
-            {Historydata.length()}
+            {Historydata ? Historydata.length : 0}
           </Text>
           <Text style={{ color: "#ffffff" }}> Total Sessions</Text>
         </View>

@@ -10,13 +10,13 @@ export default function HomeScreen() {
   const [locations, setLocations] = useState<any>();
   const [startTime, setStartTime] = useState<any>();
   const [timer, setTimer] = useState<any>(null);
-  const [km, setKm] = useState(0);
+  const [km, setKm] = useState(0.0);
 
   useEffect(() => {
     //ping location for every 20 seconds
     if (started) {
       //for now this is good - all platform
-      const intervalId = setInterval(() => location_finder(), 20000);
+      const intervalId = setInterval(async () => await location_finder(), 5000);
       return () => clearInterval(intervalId);
 
       //only for android
@@ -55,11 +55,15 @@ export default function HomeScreen() {
     }
   }, [started]);
 
+  //find location
   const location_finder = async () => {
     console.log("Inside location finder");
-    let location = await Location.getCurrentPositionAsync({});
+    let location = await Location.getCurrentPositionAsync();
     const longitude = location.coords.longitude;
     const latitude = location.coords.latitude;
+
+    console.log(locations);
+    console.log("latitude: ", latitude, "longitude: ", longitude);
     if (started) {
       const distance = getPreciseDistance(
         {
@@ -68,8 +72,7 @@ export default function HomeScreen() {
         },
         { latitude: latitude, longitude: longitude }
       );
-      setKm(km + distance / 1000);
-      console.log("km : ", km, "distance : ", distance);
+      setKm((prev) => prev + distance / 1000);
       setLocations({
         lat: latitude,
         lan: longitude,
@@ -79,8 +82,8 @@ export default function HomeScreen() {
         lat: latitude,
         lan: longitude,
       });
+      return location;
     }
-    return location;
   };
 
   return (
@@ -200,9 +203,9 @@ export default function HomeScreen() {
             ))}
           </ScrollView>
         )} */}
-        <View>
+        <View style={{ paddingTop: 30 }}>
           <Link href="/(tabs)/exercise" style={styles.button}>
-            Redirect
+            Exercise
           </Link>
         </View>
       </View>

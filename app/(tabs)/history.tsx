@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Text, View, StyleSheet, Pressable, ScrollView } from "react-native";
 import * as SecureStore from "expo-secure-store";
 
@@ -7,6 +7,29 @@ const History = () => {
   const [totaldistance, setTotaldistance] = useState<any>(null);
   const [totaltime, setTotaltime] = useState<any>(null);
 
+  useEffect(() => {
+    const res = async () => {
+      let res = await SecureStore.getItemAsync("History").then((res) =>
+        JSON.parse(res)
+      );
+      if (res) {
+        console.log(res);
+        setHistoryData(res);
+        let distance = 0;
+        let time = 0;
+        res.map((solodata) => {
+          distance += solodata.travel_distance;
+          time += solodata.time_taken;
+        });
+        setTotaldistance(distance);
+        setTotaltime(time);
+      } else {
+        alert("Cannot find history");
+      }
+    };
+    res();
+  }, []);
+
   return (
     <ScrollView style={styles.Container}>
       <Text style={styles.History}>History</Text>
@@ -14,34 +37,10 @@ const History = () => {
         style={{
           flexDirection: "row",
           gap: 50,
-          marginTop: 40,
+          marginVertical: 40,
           justifyContent: "center",
         }}
       >
-        <Text
-          style={styles.button}
-          onPress={async () => {
-            let res = await SecureStore.getItemAsync("History").then((res) =>
-              JSON.parse(res)
-            );
-            if (res) {
-              console.log(res);
-              setHistoryData(res);
-              let distance = 0;
-              let time = 0;
-              res.map((solodata) => {
-                distance += solodata.travel_distance;
-                time += solodata.time_taken;
-              });
-              setTotaldistance(distance);
-              setTotaltime(time);
-            } else {
-              alert("Cannot find history");
-            }
-          }}
-        >
-          Load History
-        </Text>
         <Text
           style={styles.button}
           onPress={async () => {

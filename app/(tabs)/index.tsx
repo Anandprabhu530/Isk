@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import * as Location from "expo-location";
 import * as SecureStore from "expo-secure-store";
 import { getPreciseDistance } from "geolib";
+import { Link } from "expo-router";
 
 export default function HomeScreen() {
   const [started, setStarted] = useState(false);
@@ -199,6 +200,11 @@ export default function HomeScreen() {
             ))}
           </ScrollView>
         )} */}
+        <View>
+          <Link href="/(tabs)/exercise" style={styles.button}>
+            Redirect
+          </Link>
+        </View>
       </View>
     </ScrollView>
   );

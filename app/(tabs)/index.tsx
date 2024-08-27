@@ -204,7 +204,7 @@ export default function HomeScreen() {
           </ScrollView>
         )} */}
         <View style={{ paddingTop: 30 }}>
-          <Link href="/(tabs)/exercise" style={styles.button}>
+          <Link href="/(tabs)/exercise/exercise" style={styles.button}>
             Exercise
           </Link>
         </View>

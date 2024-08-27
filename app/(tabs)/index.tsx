@@ -16,10 +16,7 @@ export default function HomeScreen() {
     //ping location for every 20 seconds
     if (started) {
       //for now this is good - all platform
-      const intervalId = setInterval(
-        async () => await location_finder(),
-        15000
-      );
+      const intervalId = setInterval(async () => await location_finder(), 5000);
       return () => clearInterval(intervalId);
 
       //only for android
@@ -60,14 +57,13 @@ export default function HomeScreen() {
 
   //find location
   const location_finder = async () => {
-    console.log("Inside location finder");
     let location = await Location.getCurrentPositionAsync();
     const longitude = location.coords.longitude;
     const latitude = location.coords.latitude;
 
-    console.log(locations);
-    console.log("latitude: ", latitude, "longitude: ", longitude);
     if (started) {
+      console.log("latitude: ", latitude, "longitude: ", longitude);
+      console.log("latitude: ", locations.lat, "longitude: ", locations.lan);
       const distance = getPreciseDistance(
         {
           latitude: locations.lat,
@@ -81,6 +77,7 @@ export default function HomeScreen() {
         lan: longitude,
       });
     } else {
+      console.log("First time");
       setLocations({
         lat: latitude,
         lan: longitude,
@@ -171,6 +168,8 @@ export default function HomeScreen() {
                   await Location.requestForegroundPermissionsAsync();
 
                 const location = await location_finder();
+
+                console.log(location, "from started");
 
                 //set start time in unix epoch
                 setStartTime(location.timestamp);

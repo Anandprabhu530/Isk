@@ -16,7 +16,10 @@ export default function HomeScreen() {
     //ping location for every 20 seconds
     if (started) {
       //for now this is good - all platform
-      const intervalId = setInterval(async () => await location_finder(), 5000);
+      const intervalId = setInterval(
+        async () => await location_finder(),
+        15000
+      );
       return () => clearInterval(intervalId);
 
       //only for android

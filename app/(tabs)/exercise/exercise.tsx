@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { Link, useNavigation } from "expo-router";
 import {
   Image,
   ImageBackground,
@@ -18,12 +18,15 @@ const exercise_list = [
   { name: "Crunches", img: "../../../assets/images/aipullup.png" },
 ];
 const exercise = () => {
+  const navigate = useNavigation();
   return (
     <ScrollView style={style.full_screen_view}>
       <Text style={style.exercise_heading}>Exercises</Text>
       {exercise_list.map((exercise_name, index) => (
-        <Link
-          href="/(tabs)/exercise/[id]"
+        <Pressable
+          onPress={() =>
+            navigate.navigate("Exercisedetails", { exercise_name })
+          }
           style={style.exercise_cards}
           key={index}
         >
@@ -45,7 +48,7 @@ const exercise = () => {
               width: 230,
             }}
           ></ImageBackground>
-        </Link>
+        </Pressable>
       ))}
     </ScrollView>
   );

@@ -60,7 +60,6 @@ export default function HomeScreen() {
     let location = await Location.getCurrentPositionAsync();
     const longitude = location.coords.longitude;
     const latitude = location.coords.latitude;
-
     if (started) {
       console.log("latitude: ", latitude, "longitude: ", longitude);
       console.log("latitude: ", locations.lat, "longitude: ", locations.lan);

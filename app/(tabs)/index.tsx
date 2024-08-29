@@ -18,30 +18,6 @@ export default function HomeScreen() {
       //for now this is good - all platform
       const intervalId = setInterval(async () => await location_finder(), 5000);
       return () => clearInterval(intervalId);
-
-      //only for android
-      // const res = async () => {
-      //   const watchLocation = await Location.watchPositionAsync(
-      //     {
-      //       accuracy: Location.Accuracy.Highest,
-      //       timeInterval: 5000,
-      //       distanceInterval: 0,
-      //     },
-      //     (newLocation) => {
-      //       const calculatedDistance = getPreciseDistance(
-      //         { latitude: location.lat, longitude: location.lon },
-      //         newLocation.coords
-      //       );
-      //       setKm(km + calculatedDistance);
-      //       console.log("km: ", km, " distance: ", calculatedDistance);
-
-      //       setLocations(newLocation.coords);
-      //     }
-      //   );
-
-      //   return () => watchLocation.remove();
-      // };
-      // res();
     }
   }, [started]);
 
@@ -53,7 +29,7 @@ export default function HomeScreen() {
       }, 1000);
       return () => clearInterval(timerid);
     }
-  }, [started]);
+  }, [started, km]);
 
   //find location
   const location_finder = async () => {
@@ -61,6 +37,8 @@ export default function HomeScreen() {
     const longitude = location.coords.longitude;
     const latitude = location.coords.latitude;
     if (started) {
+      console.log("latitude: ", latitude, "longitude: ", longitude);
+      console.log("latitude: ", locations.lat, "longitude: ", locations.lan);
       const distance = getPreciseDistance(
         {
           latitude: locations.lat,
@@ -73,6 +51,7 @@ export default function HomeScreen() {
         lat: latitude,
         lan: longitude,
       }));
+      console.log("km: ", km, "distance: ", distance);
     } else {
       console.log("First time");
       setLocations({

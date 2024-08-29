@@ -1,3 +1,4 @@
+import useStore from "@/store";
 import { Link } from "expo-router";
 import {
   Image,
@@ -9,20 +10,20 @@ import {
   View,
 } from "react-native";
 
-const exercise_list = [
-  { name: "Push Ups", img: "../../../assets/images/PushUp.png" },
-  { name: "Pull Ups", img: "../../../assets/images/aipullup.png" },
-  { name: "Plank", img: "../../../assets/images/PushUp.png" },
-  { name: "Bench Press", img: "../../../assets/images/aipullup.png" },
-  { name: "Squats", img: "../../../assets/images/PushUp.png" },
-  { name: "Crunches", img: "../../../assets/images/aipullup.png" },
-];
 const exercise = () => {
+  const { exercise_list } = useStore();
   return (
     <ScrollView style={style.full_screen_view}>
       <Text style={style.exercise_heading}>Exercises</Text>
       {exercise_list.map((exercise_name, index) => (
-        <Link href="/Exerxisedetails" style={style.exercise_cards} key={index}>
+        <Link
+          href={{
+            pathname: "/Exerxisedetails",
+            params: { exercise_name: JSON.stringify(exercise_name) },
+          }}
+          style={style.exercise_cards}
+          key={index}
+        >
           <View
             style={{
               justifyContent: "space-between",

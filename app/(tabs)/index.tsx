@@ -61,8 +61,6 @@ export default function HomeScreen() {
     const longitude = location.coords.longitude;
     const latitude = location.coords.latitude;
     if (started) {
-      console.log("latitude: ", latitude, "longitude: ", longitude);
-      console.log("latitude: ", locations.lat, "longitude: ", locations.lan);
       const distance = getPreciseDistance(
         {
           latitude: locations.lat,
@@ -71,10 +69,10 @@ export default function HomeScreen() {
         { latitude: latitude, longitude: longitude }
       );
       setKm((prev) => prev + distance / 1000);
-      setLocations({
+      setLocations(() => ({
         lat: latitude,
         lan: longitude,
-      });
+      }));
     } else {
       console.log("First time");
       setLocations({

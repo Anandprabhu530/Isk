@@ -13,10 +13,11 @@ import {
   View,
 } from "react-native";
 import {
-  getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
+
+import { auth } from "../../../firebase/index";
 
 const exercise = () => {
   // const { exercise_list } = useStore();
@@ -24,7 +25,6 @@ const exercise = () => {
   const [password, setPassword] = useState("");
 
   const handleSignIn = () => {
-    const auth = getAuth();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
@@ -37,7 +37,6 @@ const exercise = () => {
   };
 
   const handleSignUp = () => {
-    const auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;

@@ -1,21 +1,58 @@
 import useStore from "@/store";
 import { Link } from "expo-router";
+import { useState } from "react";
 import {
+  Button,
   Image,
   ImageBackground,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 
 const exercise = () => {
-  const { exercise_list } = useStore();
+  // const { exercise_list } = useStore();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSignIn = () => {
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(user);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+      });
+  };
+
+  const handleSignUp = () => {
+    const auth = getAuth();
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(user);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+      });
+  };
+
   return (
     <ScrollView style={style.full_screen_view}>
       <Text style={style.exercise_heading}>Exercises</Text>
-      {exercise_list.map((exercise_name, index) => (
+      {/* {exercise_list.map((exercise_name, index) => (
         <Link
           href={{
             pathname: "/Exerxisedetails",
@@ -43,7 +80,34 @@ const exercise = () => {
             }}
           ></ImageBackground>
         </Link>
-      ))}
+      ))} */}
+      <Text>Username</Text>
+      <TextInput
+        value={email}
+        onChangeText={setEmail}
+        placeholder="Email"
+        style={{
+          borderColor: "#ffffff",
+          borderWidth: 2,
+          color: "#ffffff",
+          padding: 2,
+        }}
+      ></TextInput>
+      <Text>Password</Text>
+      <TextInput
+        value={password}
+        onChangeText={setPassword}
+        placeholder="Passsword"
+        style={{
+          borderColor: "#ffffff",
+          borderWidth: 2,
+          color: "#ffffff",
+          padding: 2,
+        }}
+      ></TextInput>
+      <Button onPress={() => handleSignIn()} title="Sign in" />
+
+      <Button onPress={() => handleSignUp()} title="Register" />
     </ScrollView>
   );
 };

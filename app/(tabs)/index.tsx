@@ -19,7 +19,7 @@ export default function HomeScreen() {
       const intervalId = setInterval(async () => await location_finder(), 5000);
       return () => clearInterval(intervalId);
     }
-  }, [started]);
+  }, [started, km, locations]);
 
   //timer
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function HomeScreen() {
       }, 1000);
       return () => clearInterval(timerid);
     }
-  }, [started, km]);
+  }, [started, km, locations]);
 
   //find location
   const location_finder = async () => {
@@ -46,7 +46,8 @@ export default function HomeScreen() {
         },
         { latitude: latitude, longitude: longitude }
       );
-      setKm((prev) => prev + distance / 1000);
+      const newkm = km + distance / 1000;
+      setKm(newkm);
       setLocations(() => ({
         lat: latitude,
         lan: longitude,
@@ -68,14 +69,7 @@ export default function HomeScreen() {
         {started ? (
           <Pressable style={{ alignItems: "center" }}>
             <Pressable style={styles.sessions}>
-              <Text
-                onPress={async () => {
-                  await location_finder();
-                }}
-                style={styles.button}
-              >
-                Locate Me
-              </Text>
+              <Text style={styles.button}>Locate Me</Text>
               <Text
                 onPress={async () => {
                   setStarted(false);
